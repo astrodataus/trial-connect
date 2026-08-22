@@ -1,6 +1,6 @@
 # Trial Connect
 
-A clinical study connector for a value-based oncology network (OPN). It helps an oncologist or care navigator shortlist recruiting clinical trials for a patient, see exactly why each trial surfaced, and act on it.
+A clinical study connector for a value-based oncology network. It helps an oncologist or care navigator shortlist recruiting clinical trials for a patient, see exactly why each trial surfaced, and act on it.
 
 **Live app:** https://astrodataus.github.io/trial-connect/
 

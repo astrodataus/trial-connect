@@ -1,0 +1,9 @@
+patient_id,patient_label,tumor_type,subtype,stage,age_years,age_band,sex,biomarkers,prior_lines,ecog,home_zip,home_city,home_state,home_lat,home_lon,travel_radius_mi
+PAT-A,Patient A,breast,Triple negative,Metastatic,54,50-59,female,PD-L1 positive,2,1,10001,New York,NY,40.7484,-73.9967,50
+PAT-B,Patient B,breast,HER2 positive,Metastatic,45,40-49,female,HER2 amplified,1,0,60614,Chicago,IL,41.9214,-87.6513,100
+PAT-C,Patient C,nsclc,Non-squamous adenocarcinoma,Metastatic,64,60-69,female,EGFR exon 19 deletion,1,1,90012,Los Angeles,CA,34.0616,-118.2378,100
+PAT-D,Patient D,nsclc,Squamous,Locally advanced,73,70-79,male,KRAS G12C,3,2,77002,Houston,TX,29.7589,-95.3677,50
+PAT-E,Patient E,colorectal,Adenocarcinoma,Metastatic,59,55-64,male,MSI-high,1,0,30303,Atlanta,GA,33.7550,-84.3900,100
+PAT-F,Patient F,colorectal,Adenocarcinoma,Metastatic,49,45-54,female,KRAS wild type,2,1,98101,Seattle,WA,47.6101,-122.3344,50
+PAT-G,Patient G,prostate,Adenocarcinoma,Metastatic castration-resistant,69,65-74,male,BRCA2 mutated,2,1,33101,Miami,FL,25.7823,-80.2102,100
+PAT-H,Patient H,prostate,Adenocarcinoma,Metastatic hormone-sensitive,62,58-67,male,none identified,0,0,85001,Phoenix,AZ,33.4484,-112.0740,25

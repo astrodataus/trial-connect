@@ -7,3 +7,4 @@ node_modules/
 .playwright-mcp/
 test-results/
 playwright-report/
+src/generated/embedded_data.json

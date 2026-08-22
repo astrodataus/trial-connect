@@ -1,0 +1,51 @@
+<!doctype html>
+<html lang="en" data-theme="dark">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Trial Connect · OPN Clinical Study Connector</title>
+<meta name="description" content="A search tool for shortlisting recruiting clinical trials against de-identified patient attributes. Not a clinical decision tool.">
+<style>/*__FONTS_CSS__*/</style>
+<style>/*__APP_CSS__*/</style>
+</head>
+<body>
+<div id="tc-root" class="tc-shell">
+  <header class="tc-topbar">
+    <div class="tc-brand">
+      <div class="tc-brand-mark">TC</div>
+      <div>
+        <div class="tc-brand-name headline" style="font-size:14px;">Trial Connect</div>
+        <div class="tc-brand-sub">OPN Oncology Network</div>
+      </div>
+    </div>
+    <nav class="tc-nav" id="tc-nav">
+      <a href="#/gap" data-view="gap">The Gap</a>
+      <a href="#/match" data-view="match">Match</a>
+      <a href="#/study" data-view="study">The Study</a>
+      <a href="#/map" data-view="map">The Map</a>
+      <a href="#/landscape" data-view="landscape">The Landscape</a>
+    </nav>
+    <button class="tc-theme-toggle" id="tc-theme-toggle" type="button" aria-label="Toggle light and dark theme">
+      <svg class="tc-icon" viewBox="0 0 24 24"><circle cx="12" cy="12" r="4.5"></circle><path d="M12 2v3M12 19v3M4.2 4.2l2.1 2.1M17.7 17.7l2.1 2.1M2 12h3M19 12h3M4.2 19.8l2.1-2.1M17.7 6.3l2.1-2.1"></path></svg>
+      <span id="tc-theme-label">Light</span>
+    </button>
+  </header>
+
+  <main class="tc-main" id="tc-view-root">
+    <div class="tc-loading">Loading trial snapshot&hellip;</div>
+  </main>
+
+  <footer class="tc-footer">
+    <span class="tc-disclaimer">A search tool, not a clinical decision tool. Trial data from ClinicalTrials.gov.</span>
+    <strong id="tc-footer-snapshot">Trial data as of &hellip;</strong>
+    <span>&middot;</span>
+    <a href="https://astrodata.us" target="_blank" rel="noopener">Astrodata</a>
+    <span>&middot;</span>
+    <a href="https://design.wagabaza.com" target="_blank" rel="noopener">Design System</a>
+  </footer>
+</div>
+
+<script>/*__DATA_SCRIPT__*/</script>
+<script>/*__APP_JS__*/</script>
+</body>
+</html>

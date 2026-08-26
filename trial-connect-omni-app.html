@@ -530,7 +530,9 @@ window.__TC_EXTRAS__ = {"meta":{"snapshot_date":"2026-08-22","fetched_at_utc":"2
     _loadOmni: function () {
       var self = this;
       var NAMES = ['TC Studies', 'TC Sites', 'TC Criteria Signals', 'TC Patients'];
-      var EXPECT = { 'TC Studies': 2205, 'TC Sites': 37591, 'TC Criteria Signals': 5007, 'TC Patients': 8 };
+      /* Omni queries group by dimension, so exact duplicate rows collapse:
+         sites 37,591 -> 37,589 and signals 5,007 -> 4,403 distinct rows. */
+      var EXPECT = { 'TC Studies': 2205, 'TC Sites': 37589, 'TC Criteria Signals': 4403, 'TC Patients': 8 };
       function stripKeys(rows) {
         return rows.map(function (r) {
           var o = {}, k, nk;

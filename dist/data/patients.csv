@@ -1,9 +1,0 @@
-patient_id,patient_label,tumor_type,subtype,stage,age_years,age_band,sex,biomarkers,prior_lines,ecog,home_zip,home_city,home_state,home_lat,home_lon,x,y,ring_25_r,ring_50_r,ring_100_r,travel_radius_mi
-PAT-A,Patient A,breast,Triple negative,Metastatic,54,50-59,female,PD-L1 positive,2,1,10001,New York,NY,40.7484,-73.9967,793.4,217.6,6.8,13.6,27.3,50
-PAT-B,Patient B,breast,HER2 positive,Metastatic,45,40-49,female,HER2 amplified,1,0,60614,Chicago,IL,41.9214,-87.6513,602.5,226.1,6.8,13.6,27.3,100
-PAT-C,Patient C,nsclc,Non-squamous adenocarcinoma,Metastatic,64,60-69,female,EGFR exon 19 deletion,1,1,90012,Los Angeles,CA,34.0616,-118.2378,149.2,339.5,6.8,13.6,27.3,100
-PAT-D,Patient D,nsclc,Squamous,Locally advanced,73,70-79,male,KRAS G12C,3,2,77002,Houston,TX,29.7589,-95.3677,497.7,459.9,6.8,13.5,27.1,50
-PAT-E,Patient E,colorectal,Adenocarcinoma,Metastatic,59,55-64,male,MSI-high,1,0,30303,Atlanta,GA,33.7550,-84.3900,666.0,374.1,6.8,13.6,27.3,100
-PAT-F,Patient F,colorectal,Adenocarcinoma,Metastatic,49,45-54,female,KRAS wild type,2,1,98101,Seattle,WA,47.6101,-122.3344,157.9,78.8,6.7,13.4,26.9,50
-PAT-G,Patient G,prostate,Adenocarcinoma,Metastatic castration-resistant,69,65-74,male,BRCA2 mutated,2,1,33101,Miami,FL,25.7823,-80.2102,754.4,511.7,6.7,13.4,26.8,100
-PAT-H,Patient H,prostate,Adenocarcinoma,Metastatic hormone-sensitive,62,58-67,male,none identified,0,0,85001,Phoenix,AZ,33.4484,-112.0740,239.9,369.8,6.8,13.6,27.3,25

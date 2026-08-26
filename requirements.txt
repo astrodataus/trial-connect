@@ -1,5 +1,0 @@
-requests
-fonttools
-brotli
-pytest
-playwright

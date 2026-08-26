@@ -289,6 +289,37 @@ h1,h2,h3,.headline{
   .tc-match-row{ grid-template-columns:1fr; }
   .tc-match-dist{ text-align:left; }
 }
+
+/* Scenario ------------------------------------------------------------- */
+.tc-nav-sep{ color:var(--faint); opacity:.6; font-family:var(--font-mono); font-size:11px; align-self:center; }
+.tc-nav-scenario{
+  background:none; border:none; cursor:pointer;
+  font-family:var(--font-mono); font-size:11px; letter-spacing:.14em; text-transform:uppercase;
+  color:var(--dim); padding:8px 12px; border-radius:4px; border:1px solid transparent;
+}
+.tc-nav-scenario:hover{ color:var(--ink); border-color:var(--border); }
+.tc-nav-sep{ padding:8px 0; }
+.tc-scenario{ position:fixed; inset:0; z-index:80; }
+.tc-scenario[hidden]{ display:none; }
+.tc-scn-back{ position:absolute; inset:0; background:rgba(7,9,12,.72); }
+.tc-scn-card{
+  position:absolute; left:50%; top:50%; transform:translate(-50%,-50%);
+  width:min(680px, calc(100vw - 40px)); max-height:min(80vh, 780px); overflow-y:auto;
+  background:var(--canyon); border:1px solid var(--border); box-shadow:var(--shadow);
+  padding:34px 38px 30px;
+}
+.tc-scn-kicker{ font-family:var(--font-mono); font-size:10px; letter-spacing:.22em; text-transform:uppercase; color:var(--accent); margin:0 0 6px; }
+.tc-scn-title{ font-size:24px; margin:0 0 16px; color:var(--ink); }
+.tc-scn-label{ font-family:var(--font-mono); font-size:10px; letter-spacing:.2em; text-transform:uppercase; color:var(--faint); margin:18px 0 6px; }
+.tc-scn-body{ font-family:var(--font-sans); font-size:14px; line-height:1.55; color:var(--ink); margin:0; }
+.tc-scn-body ul{ margin:4px 0 0; padding-left:18px; }
+.tc-scn-body li{ margin:4px 0; }
+.tc-scn-body b{ color:var(--accent); font-weight:600; }
+.tc-scn-close{
+  position:absolute; top:14px; right:16px; background:none; border:none; cursor:pointer;
+  font-family:var(--font-mono); font-size:11px; letter-spacing:.14em; text-transform:uppercase; color:var(--dim);
+}
+.tc-scn-close:hover{ color:var(--ink); }
 </style>
 </head>
 <body>
@@ -307,6 +338,8 @@ h1,h2,h3,.headline{
       <a href="#/study" data-view="study">The Study</a>
       <a href="#/map" data-view="map">The Map</a>
       <a href="#/landscape" data-view="landscape">The Landscape</a>
+      <span class="tc-nav-sep" aria-hidden="true">|</span>
+      <button type="button" class="tc-nav-scenario" id="tc-scenario-open">Scenario</button>
     </nav>
     <button class="tc-theme-toggle" id="tc-theme-toggle" type="button" aria-label="Toggle light and dark theme">
       <svg class="tc-icon" viewBox="0 0 24 24"><circle cx="12" cy="12" r="4.5"></circle><path d="M12 2v3M12 19v3M4.2 4.2l2.1 2.1M17.7 17.7l2.1 2.1M2 12h3M19 12h3M4.2 19.8l2.1-2.1M17.7 6.3l2.1-2.1"></path></svg>
@@ -317,6 +350,35 @@ h1,h2,h3,.headline{
   <main class="tc-main" id="tc-view-root">
     <div class="tc-loading">Loading trial snapshot&hellip;</div>
   </main>
+
+  <div id="tc-scenario" class="tc-scenario" role="dialog" aria-modal="true" aria-labelledby="tc-scn-title" hidden>
+    <div class="tc-scn-back" id="tc-scn-back"></div>
+    <div class="tc-scn-card">
+      <button class="tc-scn-close" id="tc-scn-close" type="button">Close</button>
+      <p class="tc-scn-kicker">Scenario</p>
+      <h2 class="tc-scn-title headline" id="tc-scn-title">Shortlisting a trial</h2>
+      <p class="tc-scn-label">Who you are</p>
+      <p class="tc-scn-body">An oncologist or care navigator in a value-based oncology network, in clinic, with a patient in front of you.</p>
+      <p class="tc-scn-label">What you are here to do</p>
+      <p class="tc-scn-body">Shortlist recruiting clinical trials this patient might be eligible for, and see exactly why each one surfaced. The app never asserts eligibility; you judge the criteria, it does the searching.</p>
+      <p class="tc-scn-label">Your goals</p>
+      <div class="tc-scn-body"><ul>
+        <li>Check a patient&rsquo;s attributes against every recruiting study, in seconds instead of an hour of protocol reading.</li>
+        <li>Read the eligibility criteria verbatim, with the matched sentences shown, and see near-misses a phone call could resolve.</li>
+        <li>Weigh travel: the nearest recruiting site, and what sits within the patient&rsquo;s stated radius.</li>
+      </ul></div>
+      <p class="tc-scn-label">The data</p>
+      <p class="tc-scn-body">A ClinicalTrials.gov snapshot from 22 Aug 2026: 5,980 recruiting studies and 37,593 US sites across breast, NSCLC, colorectal and prostate cancer. Eight synthetic patient profiles; no real patient data anywhere.</p>
+      <p class="tc-scn-label">What you can find</p>
+      <div class="tc-scn-body"><ul>
+        <li><b>The Gap</b> &middot; how many recruiting studies are within reach of the demo panel, and where options run thin.</li>
+        <li><b>Match</b> &middot; a ranked shortlist per patient, with hard filters and soft signals kept visibly distinct.</li>
+        <li><b>The Study</b> &middot; one trial in full: verbatim criteria, every US site, contacts, this patient&rsquo;s match breakdown.</li>
+        <li><b>The Map</b> &middot; recruiting sites against the patient&rsquo;s location, with distance rings at 25, 50 and 100 miles.</li>
+        <li><b>The Landscape</b> &middot; recruiting studies by tumor type, phase and sponsor class.</li>
+      </ul></div>
+    </div>
+  </div>
 
   <footer class="tc-footer">
     <span class="tc-disclaimer">A search tool, not a clinical decision tool. Trial data from ClinicalTrials.gov.</span>
@@ -1025,7 +1087,7 @@ window.__TC_EMBEDDED__ = {"studies":{"fields":["nct_id","brief_title","official_
       var patient = patients.filter(function (p) { return p.patient_id === patientId; })[0] || patients[0];
 
       var html = headHtml('The map', 'Recruiting sites near ' + patient.patient_label,
-        'Distance rings at 25, 50 and 100 miles. Travel burden is the top enrollment killer. This is a schematic view, not a routing tool.');
+        'Distance rings at 25, 50 and 100 miles. Travel is one of the most common reasons enrollment fails. This is a schematic view, not a routing tool.');
       html += patientPickerHtml(patient.patient_id);
 
       var relevantStudies = TC.data.studies.filter(function (s) { return s.tumor_types_matched.indexOf(patient.tumor_type) !== -1; });
@@ -1070,7 +1132,7 @@ window.__TC_EMBEDDED__ = {"studies":{"fields":["nct_id","brief_title","official_
     render: function (root) {
       var L = TC.data.landscape;
       var html = headHtml('The landscape', 'Where the network’s options are thin',
-        'Recruiting studies by tumor type, phase and sponsor class: lookup turned into strategy.');
+        'Recruiting studies by tumor type, phase and sponsor class.');
 
       html += '<div class="tc-grid tc-grid-2 tc-mt">';
       html += '<div class="tc-card"><div class="tc-section-label" style="margin-top:0;">By phase</div>' + barList(L.by_phase, phaseLabel) + '</div>';
@@ -1162,8 +1224,21 @@ window.__TC_EMBEDDED__ = {"studies":{"fields":["nct_id","brief_title","official_
     if (el && TC.data.meta.snapshot_date) el.textContent = 'Trial data as of ' + TC.data.meta.snapshot_date;
   }
 
+  function initScenario() {
+    var m = document.getElementById('tc-scenario');
+    var openBtn = document.getElementById('tc-scenario-open');
+    if (!m || !openBtn) return;
+    function onKey(e){ if (e.key === 'Escape') close(); }
+    function open(){ m.hidden = false; document.addEventListener('keydown', onKey); }
+    function close(){ m.hidden = true; document.removeEventListener('keydown', onKey); }
+    openBtn.addEventListener('click', open);
+    document.getElementById('tc-scn-back').addEventListener('click', close);
+    document.getElementById('tc-scn-close').addEventListener('click', close);
+  }
+
   function init() {
     initTheme();
+    initScenario();
     TC.data.load().then(function () {
       initFooter();
       renderRoute();

@@ -8,3 +8,19 @@ node_modules/
 test-results/
 playwright-report/
 src/generated/embedded_data.json
+# local build + reference material (kept out of the public repo)
+data-raw/
+BUILD-README.md
+HANDOFF.md
+build.py
+fetch.py
+mapproj.py
+matching.py
+parse_criteria.py
+requirements.txt
+verify.py
+tests/
+screenshots/
+src/
+dist/
+app-omni.html

@@ -518,7 +518,67 @@ window.__TC_EMBEDDED__ = {"studies":{"fields":["nct_id","brief_title","official_
     load: function () {
       var mode = window.__TC_MODE__;
       if (mode === 'fetch') return this._loadFetch();
+      if (mode === 'omni') return this._loadOmni();
       return this._loadEmbedded();
+    },
+
+    /* Omni app mode: rows arrive from saved workbook queries through
+       omni.query(name).onData. Keys come prefixed with the view name
+       ("tc_studies.nct_id"), onData fires on load and again on refilter,
+       and an empty payload can precede the real rows. Counts are asserted
+       against the shipped snapshot so silent truncation cannot pass. */
+    _loadOmni: function () {
+      var self = this;
+      var NAMES = ['TC Studies', 'TC Sites', 'TC Criteria Signals', 'TC Patients'];
+      var EXPECT = { 'TC Studies': 2205, 'TC Sites': 37591, 'TC Criteria Signals': 5007, 'TC Patients': 8 };
+      function stripKeys(rows) {
+        return rows.map(function (r) {
+          var o = {}, k, nk;
+          for (k in r) {
+            nk = k.indexOf('.') > -1 ? k.slice(k.lastIndexOf('.') + 1) : k;
+            nk = nk.replace(/\[[^\]]*\]$/, '');
+            o[nk] = r[k];
+          }
+          return o;
+        });
+      }
+      return new Promise(function (resolve, reject) {
+        var got = {}, done = false;
+        function maybeDone() {
+          if (done) return;
+          if (!NAMES.every(function (n) { return got[n]; })) return;
+          done = true;
+          self._ingest({
+            studies: got['TC Studies'], sites: got['TC Sites'],
+            signals: got['TC Criteria Signals'], patients: got['TC Patients'],
+            extras: window.__TC_EXTRAS__
+          });
+          resolve();
+        }
+        omni.ready.then(function () {
+          NAMES.forEach(function (n) {
+            omni.query(n).onData(function (d) {
+              if (done) return;
+              if (d && d.status === 'error') { reject(new Error('query failed: ' + n)); return; }
+              if (d && d.status && d.status !== 'complete' && d.status !== 'success') return;
+              var rows = (d && (d.data || d.rows)) || (Array.isArray(d) ? d : []);
+              if (!rows.length) return; /* empty payload before the real rows: not yet */
+              if (EXPECT[n] && rows.length !== EXPECT[n]) {
+                reject(new Error(n + ' returned ' + rows.length + ' rows, expected ' + EXPECT[n] + '. Check the saved query row limit.'));
+                return;
+              }
+              got[n] = stripKeys(rows);
+              maybeDone();
+            });
+          });
+          omni.runQueries(NAMES);
+          setTimeout(function () {
+            if (done) return;
+            var missing = NAMES.filter(function (n) { return !got[n]; });
+            if (missing.length) reject(new Error('No data after 60s from: ' + missing.join(', ')));
+          }, 60000);
+        });
+      });
     },
 
     _loadEmbedded: function () {

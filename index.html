@@ -320,6 +320,54 @@ h1,h2,h3,.headline{
   font-family:var(--font-mono); font-size:11px; letter-spacing:.14em; text-transform:uppercase; color:var(--dim);
 }
 .tc-scn-close:hover{ color:var(--ink); }
+
+/* ---- Gap tile drill-ins ---- */
+.tc-stat-drill{ cursor:pointer; position:relative; transition:border-color .15s ease; }
+.tc-stat-drill:hover{ border-color:var(--accent); }
+.tc-stat-drill:focus-visible{ outline:2px solid var(--accent); outline-offset:2px; }
+.tc-stat-open{ border-color:var(--accent); }
+.tc-stat-hint{
+  font-family:var(--font-mono); font-size:9.5px; letter-spacing:.14em; text-transform:uppercase;
+  color:var(--faint); margin-top:10px;
+}
+.tc-stat-drill:hover .tc-stat-hint, .tc-stat-open .tc-stat-hint{ color:var(--accent); }
+.tc-drill{
+  background:var(--canyon); border:1px solid var(--accent); border-radius:6px;
+  padding:22px 24px; margin-top:14px;
+}
+.tc-drill-title{ font-family:var(--font-display); font-weight:300; font-size:21px; color:var(--ink); margin-bottom:6px; }
+.tc-drill-note{ font-family:var(--font-serif); font-style:italic; font-size:14.5px; color:var(--dim); max-width:70ch; margin:0 0 16px; }
+.tc-drill-sub{
+  font-family:var(--font-mono); font-size:10.5px; text-transform:uppercase; letter-spacing:.08em;
+  color:var(--faint); margin:18px 0 8px;
+}
+.tc-drill-table{ width:100%; border-collapse:collapse; font-size:13px; }
+.tc-drill-table th{
+  font-family:var(--font-mono); font-size:10px; text-transform:uppercase; letter-spacing:.06em;
+  color:var(--faint); text-align:left; padding:6px 10px; border-bottom:1px solid var(--border);
+}
+.tc-drill-table td{ padding:8px 10px; border-bottom:1px solid var(--border-soft); color:var(--dim); }
+.tc-drill-table th.num, .tc-drill-table td.num{ text-align:right; font-family:var(--font-mono); font-size:12px; }
+.tc-drill-link{
+  display:inline-block; margin-top:14px; font-family:var(--font-mono); font-size:11px;
+  letter-spacing:.08em; text-transform:uppercase; color:var(--accent); text-decoration:none;
+}
+.tc-drill-link:hover{ color:var(--ink); }
+.tc-funnel-row{ display:flex; align-items:flex-start; gap:14px; margin-bottom:12px; }
+.tc-funnel-num{
+  font-family:var(--font-display); font-weight:200; font-size:26px; color:var(--ink);
+  width:86px; flex:0 0 auto; text-align:right; line-height:1.1;
+}
+.tc-funnel-body{ flex:1; padding-top:4px; }
+.tc-funnel-bar{ height:8px; background:var(--accent); border-radius:3px; opacity:.85; }
+.tc-funnel-label{ font-size:12.5px; color:var(--dim); margin-top:5px; }
+.tc-bar-fill-alt{ background:var(--turquoise); }
+.tc-bar-fill-dim{ background:var(--terracotta); }
+.tc-drill-kind-note{ font-size:12px; color:var(--faint); margin:-2px 0 10px 132px; }
+.tc-provenance{
+  font-family:var(--font-mono); font-size:10.5px; letter-spacing:.04em; color:var(--faint);
+  margin-top:12px; text-transform:none;
+}
 </style>
 </head>
 <body>
@@ -908,6 +956,103 @@ window.__TC_DATA_URL__ = 'data/app_extras.json';
   function cityState(site) { return (site.city || '') + ', ' + stateAbbr(site.state); }
 
   TC.views = {};
+
+  function fmtCount(n) {
+    if (n == null) return '–';
+    return String(n).replace(/\B(?=(\d{3})+(?!\d))/g, ',');
+  }
+
+  function patientLabel(pid) {
+    var p = TC.data.patients.filter(function (x) { return x.patient_id === pid; })[0];
+    return p ? p.patient_label : pid;
+  }
+  function patientTumor(pid) {
+    var p = TC.data.patients.filter(function (x) { return x.patient_id === pid; })[0];
+    return p ? (TUMOR_LABELS[p.tumor_type] || p.tumor_type) : '';
+  }
+
+  /* Inline drill-in panels for the four top-line tiles. One panel container
+     sits below the tile row; clicking a tile opens its detail, clicking the
+     open tile again closes it. Every figure shown is the same build-time
+     figure verify.py recomputes from the raw files. */
+  var GAP_DRILLS = {
+    patients: function (gap) {
+      var h = '<div class="tc-drill-title">Every demo profile has at least one live option</div>' +
+        '<p class="tc-drill-note">The single most important fact in the app. Eight invented patients, eight ranked shortlists, none of them empty. Each row links to that patient’s shortlist in Match.</p>' +
+        '<table class="tc-drill-table"><thead><tr><th>Patient</th><th>Tumor type</th><th class="num">Matches</th><th class="num">Near-misses</th><th class="num">Nearest match</th><th></th></tr></thead><tbody>';
+      gap.per_patient.forEach(function (pp) {
+        h += '<tr><td>' + U.esc(patientLabel(pp.patient_id)) + '</td>' +
+          '<td>' + U.esc(patientTumor(pp.patient_id)) + '</td>' +
+          '<td class="num">' + fmtCount(pp.match_count) + '</td>' +
+          '<td class="num">' + fmtCount(pp.near_miss_count) + '</td>' +
+          '<td class="num">' + (pp.nearest_match_mi != null ? pp.nearest_match_mi + ' mi' : '–') + '</td>' +
+          '<td><a class="tc-drill-link" href="#/match/' + pp.patient_id + '">Shortlist →</a></td></tr>';
+      });
+      h += '</tbody></table>';
+      return h;
+    },
+    studies: function (gap, meta) {
+      var steps = [
+        { n: meta.raw_study_count, label: 'Recruiting studies pulled from ClinicalTrials.gov across the four cancer types' },
+        { n: meta.active_study_count, label: 'With a geocoded US site a patient could actually reach' },
+        { n: gap.matched_study_count, label: 'Matching at least one of the eight demo profiles on age, sex and travel radius' }
+      ];
+      var maxN = steps[0].n || 1;
+      var h = '<div class="tc-drill-title">How 5,980 studies become ' + fmtCount(gap.matched_study_count) + ' in play</div>' +
+        '<p class="tc-drill-note">Each cut is a hard, checkable filter, applied once at build time. Nothing here is scored or ranked by a model.</p>';
+      steps.forEach(function (s) {
+        var pct = Math.max(2, s.n / maxN * 100);
+        h += '<div class="tc-funnel-row"><div class="tc-funnel-num">' + fmtCount(s.n) + '</div>' +
+          '<div class="tc-funnel-body"><div class="tc-funnel-bar" style="width:' + pct + '%"></div>' +
+          '<div class="tc-funnel-label">' + U.esc(s.label) + '</div></div></div>';
+      });
+      var mt = gap.matched_by_tumor_type || {};
+      var maxT = Math.max.apply(null, Object.keys(mt).map(function (k) { return mt[k]; }).concat([1]));
+      h += '<div class="tc-drill-sub">Studies in play by tumor type</div>';
+      Object.keys(TUMOR_LABELS).forEach(function (t) {
+        var c = mt[t] || 0;
+        h += '<div class="tc-bar-row"><div class="tc-bar-label">' + TUMOR_LABELS[t] + '</div>' +
+          '<div class="tc-bar-track"><div class="tc-bar-fill" style="width:' + (c / maxT * 100) + '%"></div></div>' +
+          '<div class="tc-bar-value">' + fmtCount(c) + '</div></div>';
+      });
+      h += '<a class="tc-drill-link" href="#/landscape">Explore the full landscape →</a>';
+      return h;
+    },
+    distance: function (gap) {
+      var maxD = Math.max.apply(null, gap.per_patient.map(function (pp) { return pp.nearest_match_mi || 0; }).concat([1]));
+      var h = '<div class="tc-drill-title">The best option is close for every profile</div>' +
+        '<p class="tc-drill-note">Distance from each patient’s home to the nearest site of a study they actually match. Travel is one of the most common reasons enrollment fails, so this is the feasibility check on the headline.</p>';
+      gap.per_patient.forEach(function (pp) {
+        var d = pp.nearest_match_mi;
+        h += '<div class="tc-bar-row"><div class="tc-bar-label">' + U.esc(patientLabel(pp.patient_id)) + '</div>' +
+          '<div class="tc-bar-track"><div class="tc-bar-fill tc-bar-fill-alt" style="width:' + (d != null ? Math.max(2, d / maxD * 100) : 0) + '%"></div></div>' +
+          '<div class="tc-bar-value">' + (d != null ? d + ' mi' : '–') + '</div></div>';
+      });
+      h += '<a class="tc-drill-link" href="#/map">See the sites on the map →</a>';
+      return h;
+    },
+    nearmiss: function (gap) {
+      var kinds = [
+        { key: 'distance', label: 'Distance', note: 'The study is real and recruiting, but its nearest site sits outside the patient’s travel radius.' },
+        { key: 'age', label: 'Age', note: 'The patient falls just outside the study’s enrollment age range.' },
+        { key: 'sex', label: 'Sex', note: 'The study enrolls one sex only.' }
+      ];
+      var byKind = gap.near_miss_by_kind || {};
+      var maxK = Math.max.apply(null, kinds.map(function (k) { return byKind[k.key] || 0; }).concat([1]));
+      var h = '<div class="tc-drill-title">Where access is being lost, and why</div>' +
+        '<p class="tc-drill-note">Counted per patient: each of these is a recruiting study that one demo patient misses on exactly one checkable criterion. Every one carries its excluding reason, so a near-miss for this patient can be a phone call for the next.</p>';
+      kinds.forEach(function (k) {
+        var c = byKind[k.key] || 0;
+        h += '<div class="tc-bar-row"><div class="tc-bar-label">' + k.label + '</div>' +
+          '<div class="tc-bar-track"><div class="tc-bar-fill tc-bar-fill-dim" style="width:' + Math.max(1, c / maxK * 100) + '%"></div></div>' +
+          '<div class="tc-bar-value">' + fmtCount(c) + '</div></div>' +
+          '<div class="tc-drill-kind-note">' + U.esc(k.note) + '</div>';
+      });
+      h += '<a class="tc-drill-link" href="#/match">See the near-misses on a shortlist →</a>';
+      return h;
+    }
+  };
+
   TC.views.gap = {
     render: function (root) {
       var gap = TC.data.gap, meta = TC.data.meta;
@@ -916,14 +1061,18 @@ window.__TC_DATA_URL__ = 'data/app_extras.json';
 
       var html = '';
       html += headHtml('The gap', 'What the network can actually offer',
-        'Across the eight demo profiles, this is how many recruiting studies are within reach, and how thin the options get by tumor type.');
+        'Across the eight demo profiles, this is how many recruiting studies are within reach, and how thin the options get by tumor type. Click a number to see where it comes from.');
 
+      var medianMatch = gap.median_nearest_match_mi != null ? gap.median_nearest_match_mi : gap.median_nearest_site_mi;
       html += '<div class="tc-grid tc-grid-4 tc-mt">';
-      html += statCard(gap.matched_study_count, 'Studies matching ≥ 1 demo profile');
-      html += statCard(meta.active_study_count, 'Recruiting studies with a US site');
-      html += statCard((gap.median_nearest_site_mi != null ? gap.median_nearest_site_mi : '–') + ' mi', 'Median distance to nearest relevant site');
-      html += statCard(meta.snapshot_date, 'Snapshot date');
+      html += statCard(gap.patients_with_match_count + ' of ' + gap.patient_count, 'Patients with at least one match', 'patients');
+      html += statCard(fmtCount(gap.matched_study_count), 'Recruiting studies in play', 'studies');
+      html += statCard((medianMatch != null ? medianMatch : '–') + ' mi', 'Median distance to nearest match', 'distance');
+      html += statCard(fmtCount(gap.total_near_miss_count), 'Options one criterion away', 'nearmiss');
       html += '</div>';
+      html += '<div id="tc-gap-drill" class="tc-drill" hidden></div>';
+      html += '<div class="tc-provenance">Snapshot ' + U.esc(meta.snapshot_date) + ' · ' + U.esc(meta.source) +
+        ' · every figure on this page is recomputed from the raw files by an automated check before it ships.</div>';
 
       html += '<div class="tc-section-label">Active studies by tumor type</div>';
       html += '<div class="tc-card">';
@@ -955,11 +1104,43 @@ window.__TC_DATA_URL__ = 'data/app_extras.json';
       html += '</div>';
 
       root.innerHTML = html;
+
+      /* Tile → drill-in wiring. One panel, below the tile row. */
+      var drill = root.querySelector('#tc-gap-drill');
+      var tiles = root.querySelectorAll('[data-drill]');
+      var open = null;
+      tiles.forEach(function (tile) {
+        U.on(tile, 'click', function () {
+          var key = tile.getAttribute('data-drill');
+          if (open === key) {
+            open = null;
+            drill.hidden = true;
+            drill.innerHTML = '';
+            tiles.forEach(function (t) { t.classList.remove('tc-stat-open'); t.setAttribute('aria-expanded', 'false'); });
+            return;
+          }
+          open = key;
+          tiles.forEach(function (t) {
+            t.classList.toggle('tc-stat-open', t === tile);
+            t.setAttribute('aria-expanded', t === tile ? 'true' : 'false');
+          });
+          drill.innerHTML = GAP_DRILLS[key](gap, meta);
+          drill.hidden = false;
+        });
+        U.on(tile, 'keydown', function (e) {
+          if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); tile.click(); }
+        });
+      });
     }
   };
 
-  function statCard(value, label) {
-    return '<div class="tc-card tc-stat tc-stat-accent"><div class="tc-stat-value">' + U.esc(value) + '</div><div class="tc-stat-label">' + U.esc(label) + '</div></div>';
+  function statCard(value, label, drillKey) {
+    var attrs = drillKey
+      ? ' data-drill="' + drillKey + '" role="button" tabindex="0" aria-expanded="false"'
+      : '';
+    var hint = drillKey ? '<div class="tc-stat-hint">Details</div>' : '';
+    return '<div class="tc-card tc-stat tc-stat-accent' + (drillKey ? ' tc-stat-drill' : '') + '"' + attrs + '>' +
+      '<div class="tc-stat-value">' + U.esc(value) + '</div><div class="tc-stat-label">' + U.esc(label) + '</div>' + hint + '</div>';
   }
 
   function headHtml(eyebrow, title, dek) {

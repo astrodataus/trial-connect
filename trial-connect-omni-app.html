@@ -122,6 +122,41 @@ h1,h2,h3,.headline{
 }
 .tc-theme-toggle:hover{ color:var(--ink); border-color:var(--accent); }
 
+/* ---- hamburger: nav collapses, the brand and theme toggle never do ---- */
+.tc-nav-toggle{
+  display:none; flex:0 0 auto;
+  width:38px; height:34px; padding:0; gap:4px;
+  align-items:center; justify-content:center; flex-direction:column;
+  border:1px solid var(--border); border-radius:4px;
+  background:transparent; cursor:pointer;
+}
+.tc-nav-toggle span{
+  display:block; width:16px; height:1.5px; border-radius:2px; background:var(--dim);
+  transition:transform .18s ease, opacity .18s ease;
+}
+.tc-nav-toggle:hover{ border-color:var(--accent); }
+.tc-nav-toggle:hover span{ background:var(--ink); }
+.tc-nav-toggle[aria-expanded="true"] span:nth-child(1){ transform:translateY(5.5px) rotate(45deg); }
+.tc-nav-toggle[aria-expanded="true"] span:nth-child(2){ opacity:0; }
+.tc-nav-toggle[aria-expanded="true"] span:nth-child(3){ transform:translateY(-5.5px) rotate(-45deg); }
+
+@media (max-width:960px){
+  .tc-topbar{ flex-wrap:nowrap; gap:12px; padding:12px 16px; }
+  .tc-brand{ margin-right:auto; }
+  .tc-nav-toggle{ display:flex; }
+  .tc-nav{
+    display:none; position:absolute; top:100%; left:0; right:0;
+    flex-direction:column; flex-wrap:nowrap; align-items:stretch; gap:2px;
+    padding:10px 16px 14px;
+    background:var(--paper); border-bottom:1px solid var(--border);
+    box-shadow:var(--shadow);
+  }
+  .tc-nav.open{ display:flex; }
+  .tc-nav a{ padding:11px 10px; font-size:11.5px; }
+  .tc-nav-sep{ display:none; }
+  .tc-nav-scenario{ text-align:left; padding:11px 10px; }
+}
+
 .tc-main{ flex:1; padding:32px 28px 64px; max-width:1280px; width:100%; margin:0 auto; }
 
 .tc-footer{
@@ -146,6 +181,7 @@ h1,h2,h3,.headline{
   background:var(--canyon); border:1px solid var(--border-soft); border-radius:8px; padding:20px;
 }
 .tc-grid{ display:grid; gap:16px; }
+.tc-grid > *{ min-width:0; }
 .tc-grid-2{ grid-template-columns:repeat(auto-fit,minmax(260px,1fr)); }
 .tc-grid-4{ grid-template-columns:repeat(auto-fit,minmax(180px,1fr)); }
 
@@ -184,6 +220,7 @@ h1,h2,h3,.headline{
 .tc-field input, .tc-field select{
   background:var(--paper-deep); border:1px solid var(--border); color:var(--ink);
   border-radius:5px; padding:9px 10px; font-family:var(--font-sans); font-size:13.5px;
+  width:100%; max-width:100%;
 }
 .tc-field input:focus, .tc-field select:focus{ outline:2px solid var(--accent); outline-offset:1px; border-color:var(--accent); }
 
@@ -284,10 +321,45 @@ h1,h2,h3,.headline{
 .tc-scroll-x{ overflow-x:auto; }
 .tc-muted{ color:var(--faint); }
 
+/* ---- phone pass (720px and down) ---- */
 @media (max-width: 720px){
-  .tc-topbar{ flex-wrap:wrap; gap:12px; }
+  .tc-main{ padding:20px 14px 56px; }
+  .tc-title{ font-size:24px; letter-spacing:0.03em; }
+  .tc-dek{ font-size:15px; }
+  .tc-view-head{ margin-bottom:20px; }
+
+  /* multi-column layouts go single (stat tiles two-up until 480px) */
+  .tc-grid-2{ grid-template-columns:1fr; }
+  .tc-grid-4{ grid-template-columns:repeat(2,1fr); gap:10px; }
+
+  .tc-card{ padding:14px; }
+  .tc-stat{ padding:15px 14px; }
+  .tc-stat-value{ font-size:30px; }
+
   .tc-match-row{ grid-template-columns:1fr; }
   .tc-match-dist{ text-align:left; }
+
+  /* bar charts: label and value on one line, the bar full-width beneath,
+     so every bar starts at the same left edge and stays comparable */
+  .tc-bar-row{ flex-wrap:wrap; gap:3px 12px; align-items:baseline; margin-bottom:13px; }
+  .tc-bar-label{ width:auto; flex:1 1 auto; white-space:normal; order:1; }
+  .tc-bar-value{ width:auto; order:2; }
+  .tc-bar-track{ order:3; flex:0 0 100%; height:8px; }
+
+  /* wide tables scroll inside their container instead of squeezing */
+  .tc-sites-table, .tc-matrix-table, .tc-drill-table{
+    display:block; overflow-x:auto; -webkit-overflow-scrolling:touch;
+  }
+
+  .tc-drill{ padding:16px 14px; }
+  .tc-drill-kind-note{ margin-left:0; }
+  .tc-funnel-num{ width:70px; font-size:22px; }
+  .tc-footer{ padding:16px 14px 22px; }
+  .tc-scn-card{ padding:22px 18px; }
+}
+@media (max-width: 480px){
+  /* the headline tiles stack fully once two-up starts to pinch */
+  .tc-grid-4{ grid-template-columns:1fr; }
 }
 
 /* Scenario ------------------------------------------------------------- */
@@ -392,6 +464,10 @@ h1,h2,h3,.headline{
     <button class="tc-theme-toggle" id="tc-theme-toggle" type="button" aria-label="Toggle light and dark theme">
       <svg class="tc-icon" viewBox="0 0 24 24"><circle cx="12" cy="12" r="4.5"></circle><path d="M12 2v3M12 19v3M4.2 4.2l2.1 2.1M17.7 17.7l2.1 2.1M2 12h3M19 12h3M4.2 19.8l2.1-2.1M17.7 6.3l2.1-2.1"></path></svg>
       <span id="tc-theme-label">Light</span>
+    </button>
+    <button class="tc-nav-toggle" id="tc-nav-toggle" type="button"
+            aria-label="Menu" aria-expanded="false" aria-controls="tc-nav">
+      <span></span><span></span><span></span>
     </button>
   </header>
 
@@ -842,8 +918,17 @@ window.__TC_EXTRAS__ = {"meta":{"snapshot_date":"2026-08-22","fetched_at_utc":"2
 
   /* ======================= router ======================= */
 
+  /* Inside a published Omni app the page runs in a sandboxed srcdoc iframe
+     with an opaque origin: touching location.hash counts as navigating away
+     and the sandbox stops the app. Detect that and route entirely in memory,
+     intercepting hash-link clicks; the URL bar is only used when we own it. */
+  var SANDBOXED = (typeof omni !== 'undefined');
+  try { if (window.origin === 'null') SANDBOXED = true; } catch (e) { SANDBOXED = true; }
+  var memRoute = { view: 'gap', param: null, query: {} };
+
   TC.router = {
     parse: function () {
+      if (SANDBOXED) return { view: memRoute.view, param: memRoute.param, query: memRoute.query || {} };
       var hash = location.hash.replace(/^#\/?/, '');
       var parts = hash.split('?');
       var segs = parts[0].split('/').filter(Boolean);
@@ -855,11 +940,13 @@ window.__TC_EXTRAS__ = {"meta":{"snapshot_date":"2026-08-22","fetched_at_utc":"2
       return { view: segs[0] || 'gap', param: segs[1] || null, query: q };
     },
     navigate: function (view, param, query) {
+      memRoute = { view: view, param: param || null, query: query || {} };
+      if (SANDBOXED) { renderRoute(); return; }
       var h = '#/' + view + (param ? '/' + param : '');
       if (query && Object.keys(query).length) {
         h += '?' + Object.keys(query).map(function (k) { return k + '=' + encodeURIComponent(query[k]); }).join('&');
       }
-      location.hash = h;
+      if (location.hash === h) renderRoute(); else location.hash = h;
     }
   };
 
@@ -1479,13 +1566,58 @@ window.__TC_EXTRAS__ = {"meta":{"snapshot_date":"2026-08-22","fetched_at_utc":"2
     document.getElementById('tc-scn-close').addEventListener('click', close);
   }
 
+  /* ---- narrow-width nav ---- */
+  function closeNav() {
+    var nav = U.qs('#tc-nav'), btn = U.qs('#tc-nav-toggle');
+    if (!nav) return;
+    nav.classList.remove('open');
+    if (btn) btn.setAttribute('aria-expanded', 'false');
+  }
+  function initNavToggle() {
+    var nav = U.qs('#tc-nav'), btn = U.qs('#tc-nav-toggle');
+    if (!nav || !btn) return;
+    U.on(btn, 'click', function (e) {
+      e.stopPropagation();
+      var open = nav.classList.toggle('open');
+      btn.setAttribute('aria-expanded', open ? 'true' : 'false');
+    });
+    /* the Scenario button also closes it */
+    var scn = U.qs('#tc-scenario-open');
+    if (scn) U.on(scn, 'click', closeNav);
+    U.on(document, 'click', function (e) {
+      if (!nav.classList.contains('open')) return;
+      if (nav.contains(e.target) || btn.contains(e.target)) return;
+      closeNav();
+    });
+    U.on(document, 'keydown', function (e) { if (e.key === 'Escape') closeNav(); });
+  }
+
   function init() {
     initTheme();
     initScenario();
+    initNavToggle();
+    /* hash links route through the router so the sandbox never sees a
+       navigation; outside the sandbox the URL still updates normally */
+    document.addEventListener('click', function (e) {
+      if (e.defaultPrevented) return; /* a more specific handler already routed */
+      var a = e.target && e.target.closest ? e.target.closest('a[href^="#/"]') : null;
+      if (!a) return;
+      e.preventDefault();
+      closeNav();
+      var h = a.getAttribute('href').replace(/^#\/?/, '');
+      var parts = h.split('?');
+      var segs = parts[0].split('/').filter(Boolean);
+      var q = {};
+      if (parts[1]) parts[1].split('&').forEach(function (kv) {
+        var p = kv.split('=');
+        q[decodeURIComponent(p[0])] = decodeURIComponent(p[1] || '');
+      });
+      TC.router.navigate(segs[0] || 'gap', segs[1] || null, q);
+    });
     TC.data.load().then(function () {
       initFooter();
       renderRoute();
-      window.addEventListener('hashchange', renderRoute);
+      if (!SANDBOXED) window.addEventListener('hashchange', renderRoute);
     }).catch(function (err) {
       U.qs('#tc-view-root').innerHTML = '<div class="tc-empty">Could not load trial data. ' + U.esc(err && err.message) + '</div>';
     });

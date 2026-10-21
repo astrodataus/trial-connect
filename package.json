@@ -1,0 +1,27 @@
+{
+  "name": "primary",
+  "version": "1.0.0",
+  "description": "A clinical study connector for a value-based oncology network. It helps an oncologist or care navigator shortlist recruiting clinical trials for a patient, see exactly why each trial surfaced, and act on it.",
+  "main": "index.js",
+  "scripts": {
+    "build:analytics": "esbuild analytics-src.js --bundle --minify --outfile=analytics.js",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/astrodataus/trial-connect.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/astrodataus/trial-connect/issues"
+  },
+  "homepage": "https://github.com/astrodataus/trial-connect#readme",
+  "dependencies": {
+    "@vercel/analytics": "^2.0.1"
+  },
+  "devDependencies": {
+    "esbuild": "^0.28.2"
+  }
+}
